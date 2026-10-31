@@ -22,7 +22,7 @@ class $modify(CCScheduler) {
         else
             return;
 
-        editLayer->updateHover(CCEGLView::get()->getMousePos());
+        editLayer->updateHover(getMousePos());
     }
 };
 
