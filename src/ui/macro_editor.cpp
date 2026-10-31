@@ -1,27 +1,28 @@
 #include "macro_editor.hpp"
 #include "record_layer.hpp"
 
-#include <Geode/modify/CCEGLView.hpp>
+#include <Geode/modify/CCScheduler.hpp>
 #include <Geode/modify/FLAlertLayer.hpp>
 
 MacroEditLayer* editLayer = nullptr;
 
 #ifdef GEODE_IS_WINDOWS
 
-class $modify(CCEGLView) {
-    void onGLFWMouseMoveCallBack(GLFWwindow* v1, double v2, double v3) {
-        CCEGLView::onGLFWMouseMoveCallBack(v1, v2, v3);
+class $modify(CCScheduler) {
+    void update(float dt) {
+        CCScheduler::update(dt);
 
         if (!editLayer) return;
 
         CCScene* scene = CCDirector::get()->getRunningScene();
+        if (!scene) return;
+
         if (MacroEditLayer* layer = scene->getChildByType<MacroEditLayer>(0))
             editLayer = layer;
         else
             return;
 
-        editLayer->updateHover(getMousePos());
-        
+        editLayer->updateHover(CCEGLView::get()->getMousePos());
     }
 };
 
@@ -890,7 +891,7 @@ void MacroEditLayer::onSave(CCObject*) {
             CCObject* child;
             for (CCObject* child : CCArrayExt<CCObject*>(children)) {
                 if (RecordLayer* layer = typeinfo_cast<RecordLayer*>(child)) {
-                    layer->keyBackClicked();
+                    static_cast<FLAlertLayer*>(layer)->keyBackClicked();
                     break;
                 }
             }

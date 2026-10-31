@@ -1,3 +1,4 @@
+#include <Geode/utils/async.hpp>
 #include "load_macro_layer.hpp"
 #include "autosave_settings_layer.hpp"
 #include "macro_editor.hpp"
@@ -144,9 +145,9 @@ void LoadMacroLayer::onImportMacro(CCObject*) {
 	textFilter.files = { "*.gdr", "*.xd", "*.json" };
 	fileOptions.filters.push_back(textFilter);
 
-	file::pick(file::PickMode::OpenFile, { dirs::getGameDir(), { textFilter } }).listen([this](Result<std::filesystem::path>* res) {
-		if (res->isOk()) {
-			std::filesystem::path path = res->unwrapOrDefault();
+	geode::async::spawn(file::pick(file::PickMode::OpenFile, { dirs::getGameDir(), { textFilter } }), [this](geode::Result<std::optional<std::filesystem::path>> res) {
+		if (res.isOk() && res.unwrap().has_value()) {
+			std::filesystem::path path = res.unwrap().value();
 
 			auto& g = Global::get();
 			Macro tempMacro;
@@ -715,7 +716,7 @@ void MacroCell::handleLoad() {
 	RecordLayer* newLayer = nullptr;
 
 	if (RecordLayer* layer = typeinfo_cast<RecordLayer*>(menuLayer)) {
-		layer->keyBackClicked();
+		static_cast<FLAlertLayer*>(layer)->keyBackClicked();
 		newLayer = RecordLayer::openMenu(true);
 	}
 
