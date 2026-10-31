@@ -20,7 +20,7 @@ const std::vector<std::string> keybindIDs = {
 };
 
 class $modify(CCKeyboardDispatcher) {
-  bool dispatchKeyboardMSG(enumKeyCodes key, bool isKeyDown, bool isKeyRepeat) {
+  bool dispatchKeyboardMSG(enumKeyCodes key, bool isKeyDown, bool isKeyRepeat, double timestamp) {
   
     auto& g = Global::get();
 
@@ -46,7 +46,7 @@ class $modify(CCKeyboardDispatcher) {
     //   log::debug("{}", str);
     // }
 
-    return CCKeyboardDispatcher::dispatchKeyboardMSG(key, isKeyDown, isKeyRepeat);
+    return CCKeyboardDispatcher::dispatchKeyboardMSG(key, isKeyDown, isKeyRepeat, timestamp);
   }
 };
 
